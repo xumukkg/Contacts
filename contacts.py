@@ -1,137 +1,117 @@
-contacts = [
-   {
-       "name": "John",
-       "phone": "123456"
-   },
-   {
-       "name": "Jane",
-       "phone": "564321"
-   },
-   {
-       "name": "Bob",
-       "phone": "+1234"
-   },
-]
+# contacts = [
+#    {
+#        "name": "John",
+#        "phone": "123456"
+#    },
+#    {
+#        "name": "Ruslan",
+#        "phone": "07003869"
+#    },
+#    {
+#        "name": "Eddy",
+#        "phone": "414443"
+#    },
+#    {
+#        "name": "Jane",
+#        "phone": "564321"
+#    },
+#    {
+#        "name": "Bob",
+#        "phone": "+1234"
+#    },
+# ]
+contacts = []
+def taking_contacts_data():
+  print("Reading the file")  
+  with open('contacts.txt', 'r') as f:
+    for line in f:
+      name, phone = line.strip().split(',')
+      contact = {
+        "name": name,
+        'phone': phone
+      }
+      contacts.append(contact)
+  return contacts
+taking_contacts_data()
+print(contacts)
+def write_txt_file(contacts):
+  with open('contacts.txt', 'w') as f:
+    for item in contacts:
+      contact_str = f'{item["name"]},{item["phone"]}\n'
+      f.write(contact_str)
+  print("file contact.txt is created")
+def list_contancts(contacts):
+  print()
+  format_string =  '{:<15} {:>15}'
+  print(format_string.format("Name", "Phone"))
+  for contact in contacts:
+    print(format_string.format(
+      contact["name"], 
+      contact['phone']
+      ))
 
-FORMAT_STR = "{:<12} {:>12}"
-
-
-def print_contact(contact):
-    print(FORMAT_STR.format(
-        contact['name'], 
+def find_contact(contacts):
+  format_string =  '{:<15} {:>15}'
+  
+  print("enter name")
+  name = input(">")
+  for contact in contacts:
+    if contact["name"] ==  name:
+      print(format_string.format(
+        contact["name"], 
         contact['phone']
-    ))
-
-
-def list_contacts(contacts):
-    print(FORMAT_STR.format('Name', 'Phone'))
-    for contact in contacts:
-        print_contact(contact)
-
-
-def nice_input(message):
-    print(message + ':')
-    result = input("> ")
-    return result
-
-
-def find_contact(contacts, name=None):
-    if not name:
-        name = nice_input("Введите имя контакта")
-
-    for contact in contacts:
-        if contact['name'] == name:
-            return contact
-    return None
-
-
-def show_contact(contacts):
-    contact = find_contact(contacts)
-    if contact is not None:
-        print_contact(contact)
-    else:
-        print("Контакт не найден")
-
-
+      
+        ))
+      break
+  else:
+      print('contact not found ')
 def add_contact(contacts):
-    name = nice_input("Введите имя контакта")
-    contact = find_contact(contacts, name)
-    if contact:
-        print("Такой контакт уже существует!")
+  contact  = {}
+  print('Enter the name')
+  name = input('> ')
+  while True:
+    if set(name) & set(',')!=set():
+      print('Enter the name, without \',\'')
+      name = input('> ')
     else:
-        phone = nice_input("Введите телефон контакта")
-        new_contact = {
-            'name': name,
-            'phone': phone
-        }
-        contacts.append(new_contact)
-        print_contact(new_contact)
-
-
-def edit_contact(contacts):
-    contact = find_contact(contacts)
-    if contact:
-        new_name = nice_input("Введите новое имя контакта")
-        new_phone = nice_input("Введите новый телефон контакта")
-        
-        # if ',' in new_name:
-        #     print("Запятую нельзя!")
-        #     return
-
-        contact['name'] = new_name
-        contact['phone'] = new_phone
-        print_contact(contact)
+      break
+  print("Enter Phone-number ")
+  Phone = input('> ')
+  while True:
+    if set(Phone) & set(',')!=set():
+      print('Enter the Phone-number, without \',\'')
+      Phone = input('> ')
     else:
-        print('Контакт не найден!')
+      break
+  contact={
+    "name": name,
+    "phone": Phone
+  }
+  contacts.append(contact)
+  print("contact is added")
+  write_txt_file(contacts)
+  print()
 
+print("Welcomre to contact List\n Command")
+print(""" 
+          * list
+          * find
+          * add
+          * exit
+          * file.txt """)
+while True:
 
-def delete_contact(contacts):
-    contact = find_contact(contacts)
-    if contact:
-        contacts.remove(contact)
-        print("Контакт удалён!")
-    else:
-        print('Контакт не найден!')
-
-
-def help():
-    print("""    Команды:
-* list - показать список контактов
-* find - найти контакт по имени
-* add - добавить контакт в книгу
-* edit - поменять данные контакта
-* delete - удалить контакт
-* help - показать список команд
-* exit - выход.""")
-
-
-def handle_command(command):
-    if command == 'list':
-        list_contacts(contacts)
-    elif command == 'find':
-        show_contact(contacts)
-    elif command == 'add':
-        add_contact(contacts)
-    elif command == 'edit':
-        edit_contact(contacts)
-    elif command == 'delete':
-        delete_contact(contacts)
-    elif command == 'help':
-        help()
-    else:
-        print("Неизвестная команда.")
-
-
-def main():
-    print("Добро пожаловать в телефонную книгу!")
-    help()
-    while True:
-        command = nice_input("\nВведите команду")
-        if command == 'exit':
-            print("Выход")
-            break
-        else:
-            handle_command(command)
-
-
-main()
+  print("Enter command")
+  command = input(">")
+  if command == "list":
+    list_contancts(contacts)
+  elif command == 'find':
+    find_contact(contacts)
+  elif command == 'file.txt':
+    write_txt_file(contacts)
+  elif command == 'add':
+    add_contact(contacts)
+  elif command == 'exit':
+    break
+  else:
+    print("Command not found")
